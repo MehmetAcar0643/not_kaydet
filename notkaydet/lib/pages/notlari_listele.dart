@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:notkaydet/model/notlar.dart';
 import 'package:notkaydet/utils/database_helper.dart';
+import 'not_detay.dart';
 
 class NotlariListele extends StatefulWidget {
   const NotlariListele({Key key}) : super(key: key);
@@ -93,7 +93,7 @@ class _NotlariListeleState extends State<NotlariListele> {
                                 style: TextStyle(color: Colors.green),
                               ),
                               onPressed: () {
-                                // _detaySayfasinaGit(context, tumNotlar[index]);
+                                _detaySayfasinaGit(context, tumNotlar[index]);
                               },
                             ),
                           ],
@@ -146,9 +146,21 @@ class _NotlariListeleState extends State<NotlariListele> {
   void _notSil(int notID) {
     databaseHelper.notSil(notID).then((silinenID) {
       if (silinenID != 0) {
-        Scaffold.of(context).showSnackBar(SnackBar(content: Text("Not Silindi")));
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("Not Silindi"),
+          duration: Duration(seconds: 1),
+        ));
         setState(() {});
       }
     });
+  }
+
+  void _detaySayfasinaGit(BuildContext context, Notlar not) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) =>
+              NotDetay(baslik: "Notu Düzenle", duzenlenecekNot: not)),
+    ).then((value) => setState(() {}));
   }
 }

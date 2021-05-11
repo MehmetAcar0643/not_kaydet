@@ -3,17 +3,22 @@ import 'package:notkaydet/model/kategori.dart';
 import 'package:notkaydet/model/notlar.dart';
 import 'package:notkaydet/utils/database_helper.dart';
 
-class NotEkle extends StatefulWidget {
+class NotDetay extends StatefulWidget {
+  String baslik;
+  Notlar duzenlenecekNot;
+
+  NotDetay({this.baslik, this.duzenlenecekNot});
+
   @override
-  _NotEkleState createState() => _NotEkleState();
+  _NotDetayState createState() => _NotDetayState();
 }
 
-class _NotEkleState extends State<NotEkle> {
+class _NotDetayState extends State<NotDetay> {
   var _formKey = GlobalKey<FormState>();
   List<Kategori> tumKategoriler;
   DatabaseHelper databaseHelper;
-  int kategoriID = 1;
-  int secilenOncelik = 0;
+  int kategoriID;
+  int secilenOncelik;
   static var _oncelik = ["Düşük", "Orta", "Yüksek"];
   String notBaslik;
   String notIcerik;
@@ -29,6 +34,14 @@ class _NotEkleState extends State<NotEkle> {
       for (Map okunanMap in kategoriMapListesi) {
         tumKategoriler.add(Kategori.fromMap(okunanMap));
       }
+
+      if (widget.duzenlenecekNot != null) {
+        kategoriID = widget.duzenlenecekNot.kategoriID;
+        secilenOncelik = widget.duzenlenecekNot.notOncelik;
+      } else {
+        kategoriID = 1;
+        secilenOncelik = 0;
+      }
       setState(() {});
     });
   }
@@ -41,7 +54,8 @@ class _NotEkleState extends State<NotEkle> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Center(
-          child: Text("Not Ekle"),
+          child: Text(
+              widget.duzenlenecekNot != null ? widget.duzenlenecekNot.notBaslik : "Not Ekle"),
         ),
       ),
       body: tumKategoriler.length <= 0
@@ -71,7 +85,9 @@ class _NotEkleState extends State<NotEkle> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
                               items: kategoriItemleri(),
-                              value: kategoriID,
+                              value: widget.duzenlenecekNot != null
+                                  ? widget.duzenlenecekNot.kategoriID
+                                  : kategoriID,
                               onChanged: (secilenKategoriID) {
                                 setState(() {
                                   kategoriID = secilenKategoriID;
@@ -94,6 +110,9 @@ class _NotEkleState extends State<NotEkle> {
                         } else
                           return null;
                       },
+                      initialValue: widget.duzenlenecekNot != null
+                          ? widget.duzenlenecekNot.notBaslik
+                          : "",
                       onSaved: (text) {
                         notBaslik = text;
                       },
@@ -109,6 +128,9 @@ class _NotEkleState extends State<NotEkle> {
                       onSaved: (text) {
                         notIcerik = text;
                       },
+                      initialValue: widget.duzenlenecekNot != null
+                          ? widget.duzenlenecekNot.notIcerik
+                          : "",
                     ),
                     SizedBox(height: 10),
                     Padding(
@@ -137,7 +159,9 @@ class _NotEkleState extends State<NotEkle> {
                                     value: _oncelik.indexOf(oncelik),
                                   );
                                 }).toList(),
-                                value: secilenOncelik,
+                                value: widget.duzenlenecekNot != null
+                                    ? widget.duzenlenecekNot.notOncelik
+                                    : secilenOncelik,
                                 onChanged: (oncelik) {
                                   setState(() {
                                     secilenOncelik = oncelik;
@@ -167,14 +191,30 @@ class _NotEkleState extends State<NotEkle> {
                             if (_formKey.currentState.validate()) {
                               _formKey.currentState.save();
                               var tarihnow = DateTime.now();
-                              databaseHelper
-                                  .notEkle(Notlar(kategoriID, notBaslik, notIcerik,
-                                      tarihnow.toString(), secilenOncelik))
-                                  .then((eklemeBasarili) {
-                                if (eklemeBasarili > 0) {
-                                  Navigator.pop(context);
-                                }
-                              });
+                              if (widget.duzenlenecekNot == null) {
+                                databaseHelper
+                                    .notEkle(Notlar(kategoriID, notBaslik, notIcerik,
+                                        tarihnow.toString(), secilenOncelik))
+                                    .then((eklemeBasarili) {
+                                  if (eklemeBasarili > 0) {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              } else {
+                                databaseHelper
+                                    .notGuncelle(Notlar.withID(
+                                        widget.duzenlenecekNot.notID,
+                                        kategoriID,
+                                        notBaslik,
+                                        notIcerik,
+                                        tarihnow.toString(),
+                                        secilenOncelik))
+                                    .then((guncellemeBasarili) {
+                                  if (guncellemeBasarili > 0) {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              }
                             }
                           },
                         ),

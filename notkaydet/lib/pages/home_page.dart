@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notkaydet/model/kategori.dart';
 import 'package:notkaydet/utils/database_helper.dart';
 
-import 'not_ekle.dart';
+import 'not_detay.dart';
 import 'notlari_listele.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             tooltip: "Not Ekle",
             child: Icon(Icons.add),
             onPressed: () {
-              _NotEkleSayfasinaGit(context);
+              _NotDetaySayfasinaGit(context);
             },
           ),
         ],
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                           _scalffoldKey.currentState.showSnackBar(
                             SnackBar(
                               content: Text("Kategori Eklendi"),
-                              duration: Duration(seconds: 2),
+                              duration: Duration(seconds: 1),
                             ),
                           );
                           Navigator.pop(context);
@@ -125,10 +125,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _NotEkleSayfasinaGit(BuildContext context) {
+  void _NotDetaySayfasinaGit(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => NotEkle()),
+      MaterialPageRoute(builder: (BuildContext context) => NotDetay(baslik:"Yeni Not")),
     ).then((value) => setState(() {}));
   }
 }
