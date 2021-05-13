@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notkaydet/model/kategori.dart';
+import 'package:notkaydet/pages/kategoriler.dart';
 import 'package:notkaydet/utils/database_helper.dart';
 
 import 'not_detay.dart';
@@ -21,9 +22,22 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       key: _scalffoldKey,
       appBar: AppBar(
-        title: Center(
-          child: Text("Notlarım"),
-        ),
+        title: Text("Notlarım"),
+        actions: [
+          PopupMenuButton(itemBuilder: (context) {
+            return [
+              PopupMenuItem(
+                  child: ListTile(
+                leading: Icon(Icons.category),
+                title: Text("Kategoriler"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _kategorilereGit(context);
+                },
+              )),
+            ];
+          }),
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -128,7 +142,13 @@ class _HomePageState extends State<HomePage> {
   void _NotDetaySayfasinaGit(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (BuildContext context) => NotDetay(baslik:"Yeni Not")),
+      MaterialPageRoute(builder: (BuildContext context) => NotDetay(baslik: "Yeni Not")),
     ).then((value) => setState(() {}));
+  }
+
+  _kategorilereGit(BuildContext context) {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (BuildContext context) => Kategoriler()))
+        .then((value) => setState(() {}));
   }
 }

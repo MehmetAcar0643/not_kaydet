@@ -64,6 +64,15 @@ class DatabaseHelper {
     return sonuc;
   }
 
+  Future<List<Kategori>> kategoriListesiniGetir() async {
+    var kategorilerMapListesi = await kategorileriGetir();
+    var kategoriListesi = List<Kategori>();
+    for (Map map in kategorilerMapListesi) {
+      kategoriListesi.add(Kategori.fromMap(map));
+    }
+    return kategoriListesi;
+  }
+
   Future<int> kategoriEkle(Kategori kategori) async {
     var db = await _getDatabase();
     var sonuc = await db.insert("kategori", kategori.toMap());
@@ -85,7 +94,6 @@ class DatabaseHelper {
 
 /////////////////////////////////************************************////////////////////////////////
 
-
   Future<List<Map<String, dynamic>>> notlariGetir() async {
     var db = await _getDatabase();
     var sonuc = await db.rawQuery(
@@ -104,7 +112,8 @@ class DatabaseHelper {
 
   Future<int> notGuncelle(Notlar not) async {
     var db = await _getDatabase();
-    var sonuc = await db.update("notlar", not.toMap(), where: 'notID =?', whereArgs: [not.notID]);
+    var sonuc =
+        await db.update("notlar", not.toMap(), where: 'notID =?', whereArgs: [not.notID]);
     return sonuc;
   }
 
@@ -194,5 +203,4 @@ class DatabaseHelper {
     }
     return "";
   }
-
 }

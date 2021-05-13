@@ -85,9 +85,7 @@ class _NotDetayState extends State<NotDetay> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
                               items: kategoriItemleri(),
-                              value: widget.duzenlenecekNot != null
-                                  ? widget.duzenlenecekNot.kategoriID
-                                  : kategoriID,
+                              value: kategoriID,
                               onChanged: (secilenKategoriID) {
                                 setState(() {
                                   kategoriID = secilenKategoriID;
@@ -159,9 +157,7 @@ class _NotDetayState extends State<NotDetay> {
                                     value: _oncelik.indexOf(oncelik),
                                   );
                                 }).toList(),
-                                value: widget.duzenlenecekNot != null
-                                    ? widget.duzenlenecekNot.notOncelik
-                                    : secilenOncelik,
+                                value: secilenOncelik,
                                 onChanged: (oncelik) {
                                   setState(() {
                                     secilenOncelik = oncelik;
