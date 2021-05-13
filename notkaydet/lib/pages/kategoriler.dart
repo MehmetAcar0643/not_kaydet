@@ -39,9 +39,12 @@ class _KategorilerState extends State<Kategoriler> {
             return ListTile(
               onTap: () => _kategoriDuzenle(tumKategoriler[index].kategoriID),
               title: Text(tumKategoriler[index].kategoriBaslik),
-              trailing: GestureDetector(
-                  onTap: () => _kategoriSil(tumKategoriler[index].kategoriID),
-                  child: Icon(Icons.delete)),
+              trailing: tumKategoriler[index].kategoriID == 1
+                  ? GestureDetector(child: Icon(Icons.admin_panel_settings))
+                  : GestureDetector(
+                      onTap: () => _kategoriSil(tumKategoriler[index].kategoriID,
+                          tumKategoriler[index].kategoriBaslik),
+                      child: Icon(Icons.delete)),
               leading: Icon(Icons.category),
             );
           }),
@@ -56,17 +59,18 @@ class _KategorilerState extends State<Kategoriler> {
     });
   }
 
-  _kategoriSil(int kategoriID) {
+  _kategoriSil(int kategoriID, String kategoriBaslik) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: Text("asd"),
+          title: Text(kategoriBaslik),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text('"' +
+                  kategoriBaslik +
                   '" kategorisini silmek istediğinize emin misiniz? Bu işlem geri alınamaz, ve kategoriye ait  tüm notlar silinir...'),
               ButtonBar(
                 children: [

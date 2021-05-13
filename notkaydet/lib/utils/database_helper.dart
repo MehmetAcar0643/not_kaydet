@@ -23,6 +23,7 @@ class DatabaseHelper {
   Future<Database> _getDatabase() async {
     if (_database == null) {
       _database = await _initializeDatabase();
+      _database.rawQuery("PRAGMA foreign_keys=ON");
       return _database;
     } else {
       return _database;
