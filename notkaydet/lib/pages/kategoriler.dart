@@ -24,11 +24,6 @@ class _KategorilerState extends State<Kategoriler> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyleBaslik = Theme.of(context)
-        .textTheme
-        .body1
-        .copyWith(fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'Raleway');
-
     if (tumKategoriler == null) {
       tumKategoriler = List<Kategori>();
       kategoriListesiGuncelle();
@@ -45,7 +40,6 @@ class _KategorilerState extends State<Kategoriler> {
               onTap: () => _kategoriDuzenle(context, tumKategoriler[index]),
               title: Text(
                 tumKategoriler[index].kategoriBaslik,
-                style: textStyleBaslik,
               ),
               trailing: tumKategoriler[index].kategoriID == 1
                   ? GestureDetector(child: Icon(Icons.admin_panel_settings))
