@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             heroTag: "Kategori Ekle",
             tooltip: "Kategori Ekle",
-            child: Icon(Icons.add_circle_outline),
+            child: Icon(Icons.bookmark),
             mini: true,
             onPressed: () {
               kategoriEkleModal(context);

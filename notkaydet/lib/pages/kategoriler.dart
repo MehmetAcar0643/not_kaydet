@@ -24,6 +24,11 @@ class _KategorilerState extends State<Kategoriler> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle textStyleBaslik = Theme.of(context)
+        .textTheme
+        .body1
+        .copyWith(fontSize: 16, fontWeight: FontWeight.w700, fontFamily: 'Raleway');
+
     if (tumKategoriler == null) {
       tumKategoriler = List<Kategori>();
       kategoriListesiGuncelle();
@@ -37,8 +42,11 @@ class _KategorilerState extends State<Kategoriler> {
           itemCount: tumKategoriler.length,
           itemBuilder: (context, index) {
             return ListTile(
-              onTap: () => _kategoriDuzenle(tumKategoriler[index].kategoriID),
-              title: Text(tumKategoriler[index].kategoriBaslik),
+              onTap: () => _kategoriDuzenle(context, tumKategoriler[index]),
+              title: Text(
+                tumKategoriler[index].kategoriBaslik,
+                style: textStyleBaslik,
+              ),
               trailing: tumKategoriler[index].kategoriID == 1
                   ? GestureDetector(child: Icon(Icons.admin_panel_settings))
                   : GestureDetector(
@@ -110,5 +118,99 @@ class _KategorilerState extends State<Kategoriler> {
     );
   }
 
-  _kategoriDuzenle(int kategoriID) {}
+  // _kategoriDuzenle(Kategori guncellenecekKategori) {
+  //   kategoriDuzenleModal(context, guncellenecekKategori);
+  // }
+
+  _kategoriDuzenle(BuildContext context, Kategori guncellenecekKategori) {
+    var _formKey = GlobalKey<FormState>();
+    var _guncellenenKategori;
+    showDialog(
+      //Boşluğa tıklayınca açılır pencere kapanmıyor.!!!!
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text(
+            "Kategori Güncelle",
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
+          children: [
+            Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Kategori Adı",
+                    border: OutlineInputBorder(),
+                  ),
+                  initialValue: guncellenecekKategori.kategoriBaslik,
+                  validator: (kategori) {
+                    if (kategori.length < 3) {
+                      return "En az 3 karakter giriniz.";
+                    } else
+                      return null;
+                  },
+                  onSaved: (val) {
+                    setState(() {
+                      _guncellenenKategori = val;
+                    });
+                  },
+                ),
+              ),
+            ),
+            ButtonBar(
+              children: [
+                RaisedButton(
+                  color: Colors.red.shade500,
+                  child: Text("Vazgeç"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                RaisedButton(
+                  color: Colors.green,
+                  child: Text("Güncelle"),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+
+                      databaseHelper
+                          .kategoriGuncelle(Kategori.withID(
+                              guncellenecekKategori.kategoriID, _guncellenenKategori))
+                          .then((kategoriID) {
+                        if (kategoriID > 0) {
+                          _scalffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                              content: Text("Kategori Güncellendi"),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                          kategoriListesiGuncelle();
+                          Navigator.pop(context);
+                        }
+                      });
+
+                      // databaseHelper.kategoriEkle(Kategori(_guncellenenKategori)).then((kategoriID) {
+                      //   if (kategoriID > 0) {
+                      //     _scalffoldKey.currentState.showSnackBar(
+                      //       SnackBar(
+                      //         content: Text("Kategori Eklendi"),
+                      //         duration: Duration(seconds: 1),
+                      //       ),
+                      //     );
+                      //     Navigator.pop(context);
+                      //   }
+                      // });
+                    }
+                  },
+                ),
+              ],
+            )
+          ],
+        );
+      },
+    );
+  }
 }
